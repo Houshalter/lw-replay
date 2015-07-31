@@ -12,9 +12,9 @@ local sleep = require 'socket'.sleep
 local s = irc.new{nick = config.nick, username = config.username, realname = config.realname}
 
 s:hook('OnChat', function(user, channel, message)
-	print(('[%s] %s: %s'):format(channel, user.nick, message))
-	if message == '.command' then
-		
+	if message:match('%.ff') then
+		speed = message:match('%.ff (.*)')
+		utcAdjust os.clock()
 	end
 end)
 
@@ -27,15 +27,13 @@ for i, channel in ipairs(config.channels) do
 end
 s:sendChat('NickServ', 'identify '..config.password)
 logs = io.open(config.dataFileName, "r")
-lastTime = os.clock()
+m = cjson.decode(logs:read('*l'))
+utcAdjust = os.clock()+20+m[2]
 while true do
 	s:think()
-	if os.clock()-lastTime > 5 then
-		local m = cjson.decode(logs:read('*l'))
-		print(os.clock(), m[4])
-		s:sendChat(config.mainChannel, m[4])
+	if os.clock() > m[2]-utcAdjust then
+		s:sendChat(config.mainChannel, m[3]:match('(.-)!')..': '..m[4])
 		sleep(config.refeshRate)
-		lastTime = os.clock()
+		m = cjson.decode(logs:read('*l'))
 	end
-	--sleep((nextMessageTime < config.refeshRate) and nextMessageTime or config.refeshRate)
 end
