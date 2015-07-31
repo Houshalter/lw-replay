@@ -16,7 +16,7 @@ s:hook('OnChat', function(user, channel, message)
 		newspeed = tonumber(message:match('%.ff (.*)'))
 		newUtcAdjust = -os.clock()*speed+utcAdjust+os.clock()*newspeed
 		speed = newspeed
-	else if message:match(.skip)
+	else if message:match('.skip')
 	
 	end
 end)
