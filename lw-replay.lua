@@ -41,10 +41,18 @@ s:hook('OnChat', function(user, channel, message)
 		end
 	elseif message:match('%.utc') then
 		s:sendChat(channel, tostring(os.clock()*speed+utcAdjust))
+	elseif message:match('%topic') then
+		setTopic()
 	elseif message:match('%.help') then
-		s:sendChat(channel, 'Available Commands: ff, .skip, .setutc, .utc')
+		s:sendChat(channel, 'Available Commands: ff, .skip, .setutc, .utc, .topic')
 	end
 end)
+
+function setTopic()
+	local topic = ('TOPIC %s #lesswrong history, replayed by a bot. "%s" https://github.com/Houshalter/lw-replay'):format(config.mainChannel, quotes[math.random(#quotes)])
+	print(topic)
+	s:send(topic)
+end
 
 
 
@@ -58,6 +66,7 @@ logs = io.open(config.dataFileName, "r")
 m = cjson.decode(logs:read('*l'))
 utcAdjust = os.clock()+20+m[2]
 speed = 1
+setTopic()
 while true do
 	s:think()
 	if os.clock()*speed > m[2]-utcAdjust then
