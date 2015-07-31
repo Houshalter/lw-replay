@@ -13,8 +13,11 @@ local s = irc.new{nick = config.nick, username = config.username, realname = con
 
 s:hook('OnChat', function(user, channel, message)
 	if message:match('%.ff') then
-		speed = message:match('%.ff (.*)')
-		utcAdjust os.clock()
+		newspeed = tonumber(message:match('%.ff (.*)'))
+		newUtcAdjust = -os.clock()*speed+utcAdjust+os.clock()*newspeed
+		speed = newspeed
+	else if message:match(.skip)
+	
 	end
 end)
 
@@ -29,9 +32,10 @@ s:sendChat('NickServ', 'identify '..config.password)
 logs = io.open(config.dataFileName, "r")
 m = cjson.decode(logs:read('*l'))
 utcAdjust = os.clock()+20+m[2]
+speed = 1
 while true do
 	s:think()
-	if os.clock() > m[2]-utcAdjust then
+	if os.clock()*speed > m[2]-utcAdjust then
 		s:sendChat(config.mainChannel, m[3]:match('(.-)!')..': '..m[4])
 		sleep(config.refeshRate)
 		m = cjson.decode(logs:read('*l'))
