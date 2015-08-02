@@ -1,4 +1,5 @@
 config = {
+padding = 10,
 nick = "lw-replay",
 username = nil,
 realname = nil,

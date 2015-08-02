@@ -4,6 +4,8 @@ require 'config'
 require 'irc'
 cjson = require 'cjson'
 require 'quotes'
+a,pass = pcall(require, 'password')
+if a then config.password = pass end
 
 
 
@@ -14,7 +16,7 @@ local s = irc.new{nick = config.nick, username = config.username, realname = con
 
 s:hook('OnChat', function(user, channel, message)
 	if message:match('%.ff') then
-		local newspeed = tonumber(message:match(' (%d*)'))
+		local newspeed = tonumber(message:match(' (%.*)'))
 		newUtcAdjust = -os.clock()*speed+utcAdjust+os.clock()*newspeed
 		speed = newspeed
 	elseif message:match('%.skip') then
@@ -51,7 +53,7 @@ s:hook('OnChat', function(user, channel, message)
 end)
 
 function setTopic()
-	local topic = ('TOPIC %s :#lesswrong history, replayed by a bot. "%s" https://github.com/Houshalter/lw-replay'):format(config.mainChannel, quotes[math.random(#quotes)])
+	local topic = ('TOPIC %s :#lesswrong history, replayed by a bot. "%s" Type .help for help. Code at https://github.com/Houshalter/lw-replay'):format(config.mainChannel, quotes[math.random(#quotes)])
 	print(topic)
 	s:send(topic)
 end
@@ -69,10 +71,14 @@ m = cjson.decode(logs:read('*l'))
 utcAdjust = os.clock()+20+m[2]
 speed = 1
 topicTime = os.clock()-60*60+20
+math.randomseed(os.time())
 while true do
 	s:think()
 	if os.clock()*speed > m[2]-utcAdjust then
-		s:sendChat(config.mainChannel, m[3]:match('(.-)!')..': '..m[4])
+		local nick = m[3]:match('(.-)!')
+		local pNick = nick..(' '):rep(math.max(nick:len()-config.padding, 0))
+		local toSend = ('_%s: %s'):format(pNick, m[4])
+		s:sendChat(config.mainChannel, toSend)
 		sleep(config.refeshRate)
 		m = cjson.decode(logs:read('*l'))
 	end

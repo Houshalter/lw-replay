@@ -2,8 +2,6 @@ quotes = {"Strong words resonate.",
 
 "What you listen in heart, are echoes of the past. What you write today, will be echoed in the future.",
 
-"It is said some lives are linked across time. Connected by an ancient calling that echoes through the ages. Destiny.",
-
 "For last year's words belong to last year's language  And next year's words await another voice.",
 
 "Words are pale shadows of forgotten names. As names have power, words have power. Words can light fires in the minds of men. Words can wring tears from the hardest hearts.",
