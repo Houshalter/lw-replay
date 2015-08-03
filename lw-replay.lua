@@ -82,7 +82,7 @@ while true do
 		sleep(config.refeshRate)
 		m = cjson.decode(logs:read('*l'))
 	end
-	if os.clock() > topicTime+60*60 then
+	if os.clock() > topicTime+config.topicTimer*60 then
 		topicTime = os.clock()
 		setTopic()
 	end
