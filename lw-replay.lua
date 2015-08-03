@@ -16,7 +16,7 @@ local s = irc.new{nick = config.nick, username = config.username, realname = con
 
 s:hook('OnChat', function(user, channel, message)
 	if message:match('%.ff') then
-		local newspeed = tonumber(message:match(' (%.*)'))
+		local newspeed = tonumber(message:match(' (.*)'))
 		newUtcAdjust = -os.clock()*speed+utcAdjust+os.clock()*newspeed
 		speed = newspeed
 	elseif message:match('%.skip') then
@@ -70,7 +70,7 @@ logs = io.open(config.dataFileName, "r")
 m = cjson.decode(logs:read('*l'))
 utcAdjust = os.clock()+20+m[2]
 speed = 1
-topicTime = os.clock()-60*60+20
+topicTime = os.clock()-config.topicTimer*60+20
 math.randomseed(os.time())
 while true do
 	s:think()
